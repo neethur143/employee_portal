@@ -1,0 +1,44 @@
+﻿@{
+    int CalculateYearsOfService(DateTime joinDate)
+    {
+        var today = DateTime.Today;
+        int years = today.Year - joinDate.Year;
+        if (joinDate > today.AddYears(-years)) years--;
+        return years;
+    }
+}
+
+@model employee_portal.Models.TbEmployee
+
+<div class="container shadow p-5">
+    <div class="row pb-2">
+        <h2>Employee Salary Increment</h2>
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Employee ID:</dt>
+        <dd class="col-sm-9">@Model.EmployeeId</dd>
+        <dt class="col-sm-3">Current Salary:</dt>
+        <dd class="col-sm-9">@Model.Salary</dd>
+        <dt class="col-sm-3">Total Years of Experience:</dt>
+        <dd class="col-sm-9">@CalculateYearsOfService(Model.DateOfJoin) years</dd>
+    </dl>
+
+    @if (ViewData["Incremented"] != null)
+    {
+        <div class="alert alert-success">
+            <p>Salary has been incremented by @ViewData["IncrementedPercentage"]%.</p>
+            <p>New Salary: @ViewData["NewSalary"]</p>
+        </div>
+    }
+
+    <form asp-controller="Employee" asp-action="IncrementSalary" asp-route-id="@Model.EmployeeId" method="post">
+        <div class="form-group">
+            <label for="incrementPercentage">Increment Percentage (%)</label>
+            <input type="number" class="form-control" id="incrementPercentage" name="incrementPercentage" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Increment</button>
+    </form>
+    <a asp-controller="Employee" asp-action="SalaryHistory" asp-route-id="@Model.EmployeeId" class="btn btn-info">View Salary History</a>
+    <a asp-controller="Employee" asp-action="Details" asp-route-id="@Model.EmployeeId" class="btn btn-secondary mt-3">Back to Employee Details</a>
+</div>

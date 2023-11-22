@@ -1,0 +1,153 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model employee_portal.Models.EmployeeViewModel
+<div class="container shadow p-5">
+    <div class="row pb-2">
+        <h2>Add Employee</h2>
+    </div>
+    <form method="post" asp-action="AddEmployee">
+        <div class="form-step">
+            <h3 class="details-heading" data-details="employee-details"> Enter Employee Details</h3>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.EmployeeId">EID</label>
+                    <input type="number" class="form-control mb-3" asp-for="Employee.EmployeeId" id="employeeId" placeholder="Enter Employee ID">
+                    <span asp-validation-for="Employee.EmployeeId" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.EmployeeCode">Employee Code</label>
+                    <input type="text" class="form-control mb-3" asp-for="Employee.EmployeeCode" placeholder="Enter Employee Code">
+                    <span asp-validation-for="Employee.EmployeeCode" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.Firstname">First Name</label>
+                    <input type="text" class="form-control mb-3" asp-for="Employee.Firstname" placeholder="Enter First Name">
+                    <span asp-validation-for="Employee.Firstname" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.Lastname">Last Name</label>
+                    <input type="text" class="form-control mb-3" asp-for="Employee.Lastname" placeholder="Enter Last Name">
+                    <span asp-validation-for="Employee.Lastname" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.Email">Email Address</label>
+                    <input type="email" class="form-control mb-3" asp-for="Employee.Email" placeholder="Enter Email address">
+                    <span asp-validation-for="Employee.Email" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.Phonenumber">Phone Number</label>
+                    <input type="text" class="form-control mb-3" asp-for="Employee.Phonenumber" placeholder="Enter Phone number">
+                    <span asp-validation-for="Employee.Phonenumber" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.DateOfBirth">Date of Birth</label>
+                    <input type="date" class="form-control mb-3" asp-for="Employee.DateOfBirth" id="dateOfBirth">
+                    <span asp-validation-for="Employee.DateOfBirth" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.DateOfJoin">Date Of Join</label>
+                    <input type="date" class="form-control mb-3" asp-for="Employee.DateOfJoin" id="dateOfJoin">
+                    <span asp-validation-for="Employee.DateOfJoin" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.Salary">Salary</label>
+                    <input type="number" class="form-control mb-3" asp-for="Employee.Salary" placeholder="Enter Salary">
+                    <span asp-validation-for="Employee.Salary" class="alert-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.DepartmentId">Department</label>
+                    <select asp-for="Employee.DepartmentId" class="form-control" id="departmentDropdown">
+                        <option value="">Select Department</option>
+                        @foreach (var department in Model.Departments)
+                        {
+                            <option value="@department.DepartmentId">@department.Departmentname</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Employee.DepartmentId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="Employee.JobId">Job Title</label>
+                    <select asp-for="Employee.JobId" class="form-control" id="jobTitleDropdown">
+                        <option value="">Select Job Title</option>
+                    </select>
+                    <span asp-validation-for="Employee.JobId" class="text-danger"></span>
+                </div>
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-lg btn-outline-primary p-2">
+            <span asp-validation-summary="ModelOnly" class="text-danger"></span>
+            <i class="bi bi-file-plus-fill"></i> Save
+        </button>
+        <a asp-controller="Employee" asp-action="Index" class="btn btn-lg btn-warning p-2" style="margin-top: 10px;">Back To List</a>
+    </form>
+</div>
+@*//for front end validations*@
+
+@section Scripts{
+    @{
+    <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Select the date input elements by their IDs
+            var dateOfBirthInput = document.getElementById("dateOfBirth");
+            var dateOfJoinInput = document.getElementById("dateOfJoin");
+            var employeeIdInput = document.getElementById("employeeId");
+            // Set the initial values as "dd-mm-yyyy"
+            dateOfBirthInput.value = "dd-mm-yyyy";
+            dateOfJoinInput.value = "dd-mm-yyyy";
+            employeeIdInput.value = "Employee ID";
+
+            // Handle the focus event to clear the initial value
+            dateOfBirthInput.addEventListener("focus", function () {
+                if (dateOfBirthInput.value === "dd-mm-yyyy") {
+                    dateOfBirthInput.value = "";
+                }
+            });
+
+            dateOfJoinInput.addEventListener("focus", function () {
+                if (dateOfJoinInput.value === "dd-mm-yyyy") {
+                    dateOfJoinInput.value = "";
+                }
+            });
+
+            employeeIdInput.addEventListener("focus", function () {
+                if (employeeIdInput.value === "EmployeeID") {
+                    employeeIdInput.value = "";
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Handle the change event of the department dropdown
+            $('#departmentDropdown').change(function () {
+                var selectedDepartment = $(this).val();
+                // Make an AJAX request to get job titles based on the selected department
+                $.ajax({
+                    url: '/Employee/GetJobTitles',
+                    data: { departmentId: selectedDepartment },
+                    success: function (data) {
+                        // Clear job title options
+                        $('#jobTitleDropdown').empty();
+                        $('#jobTitleDropdown').append($('<option>', {
+                            value: '',
+                            text: 'Select Job Title'
+                        }));
+                        // Populate job title options
+                        $.each(data, function () {
+                            $('#jobTitleDropdown').append($('<option>', {
+                                value: this.value,
+                                text: this.text
+                            }));
+                        });
+                    }
+                });
+            });
+        });
+
+    </script>
+
+}
